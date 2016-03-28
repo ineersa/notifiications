@@ -56,7 +56,7 @@ class PasswordResetRequestForm extends Model
         return \Yii::$app
             ->mailer
             ->compose(
-                ['html' => '@app/modules/user/mails/passwordResetToken-html', 'text' => 'passwordResetToken-text'],
+                ['html' => '\'@app/modules/user/mails/passwordReset', 'text' => 'passwordResetToken-text'],
                 ['user' => $user]
             )
             ->setFrom([\Yii::$app->params['supportEmail'] => \Yii::$app->name . ' robot'])
