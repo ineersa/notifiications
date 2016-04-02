@@ -8,5 +8,6 @@ return [
     'NAV_LOGOUT' => 'Выход',
     'NAV_ADMIN' => 'Управление',
     'NAV_ADMIN_USERS' => 'Пользователи',
-    'NAV_ARTICLES' => 'Статьи'
+    'NAV_ARTICLES' => 'Статьи',
+    'NAV_NOTIFICATIONS' => 'Уведомления'
 ];

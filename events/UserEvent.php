@@ -30,4 +30,12 @@ class UserEvent extends Event
     {
         $this->_user = $form;
     }
+
+    public static function getEvents()
+    {
+        return [
+            self::USER_REGISTERED => self::USER_REGISTERED,
+            self::USER_BLOCKED => self::USER_BLOCKED,
+        ];
+    }
 }

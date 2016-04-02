@@ -17,6 +17,7 @@ use yii\behaviors\TimestampBehavior;
  */
 class Articles extends \yii\db\ActiveRecord
 {
+
     /**
      * @inheritdoc
      */

@@ -47,4 +47,14 @@ class User extends \app\modules\user\models\User
         }
         return false;
     }
+
+    public static function getUsers()
+    {
+        $users = parent::find()
+            ->select(['id','username'])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($users,'id',function($row){return $row['id'].' - '.$row['username'];});
+    }
 }
