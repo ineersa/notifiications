@@ -1,4 +1,10 @@
 <?php
+function _d($item)
+{
+    print '<pre>';
+    print_r($item);
+    print '</pre>';
+}
 
 // comment out the following two lines when deployed to production
 defined('YII_DEBUG') or define('YII_DEBUG', true);

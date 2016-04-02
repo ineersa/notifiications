@@ -61,7 +61,7 @@ class UsersController extends Controller
         $model = new User();
         $model->scenario = User::SCENARIO_ADMIN_CREATE;
         $model->status = User::STATUS_ACTIVE;
-
+        $model->setRole(Yii::$app->params['defaultRole']);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {

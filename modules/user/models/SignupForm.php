@@ -50,7 +50,7 @@ class SignupForm extends Model
             $user->status = User::STATUS_WAIT;
             $user->generateAuthKey();
             $user->generateEmailConfirmToken();
-
+            $user->setRole(Yii::$app->params['defaultRole']);
             if ($user->save()) {
                 Yii::$app->mailer->compose('@app/modules/user/mails/emailConfirm', ['user' => $user])
                     ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])

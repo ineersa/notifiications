@@ -100,13 +100,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function setRole($name)
     {
         $auth = Yii::$app->authManager;
-
         if (!empty($name)) {
             $userRoles = array_keys($auth->getRolesByUser($this->id));
             if (!isset($userRoles[0]) || $userRoles[0] != $name) {
                 $role = $auth->getRole($name);
                 $event = $this->getIsNewRecord() ? self::EVENT_AFTER_INSERT : self::EVENT_AFTER_UPDATE;
-
                 $this->on($event, function () use ($auth, $role) {
                     $auth->revokeAll($this->id);
                     $auth->assign($role, $this->id);
@@ -131,6 +129,10 @@ class User extends ActiveRecord implements IdentityInterface
         return $roles;
     }
 
+    /**
+     * @param int|string $id
+     * @return null|self::className()
+     */
     public static function findIdentity($id)
     {
         return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);

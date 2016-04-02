@@ -7,10 +7,6 @@ namespace app\modules\user;
  */
 class Module extends \yii\base\Module
 {
-    /**
-     * @var string
-     */
-    public $defaultRole = 'user';
 
     /**
      * @inheritdoc

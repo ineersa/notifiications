@@ -2,6 +2,7 @@
 
 namespace app\modules\main\controllers;
 
+use app\modules\user\models\User;
 use yii\web\Controller;
 
 /**
