@@ -38,15 +38,21 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => array_filter([
             ['label' => Yii::t('app', 'NAV_HOME'), 'url' => ['/main/default/index']],
-            ['label' => Yii::t('app', 'NAW_CONTACT'), 'url' => ['/main/contact/index']],
+            ['label' => Yii::t('app', 'NAV_CONTACT'), 'url' => ['/main/contact/index']],
             Yii::$app->user->isGuest ?
                 ['label' => Yii::t('app', 'NAV_SIGNUP'), 'url' => ['/user/default/signup']] :
                 false,
             Yii::$app->user->isGuest ?
                 ['label' => Yii::t('app', 'NAV_LOGIN'), 'url' => ['/user/default/login']] :
+                false,
+            !Yii::$app->user->isGuest ?
+                ['label' => Yii::t('app', 'NAV_PROFILE'), 'url' => ['/user/profile/index']] :
+                false,
+            !Yii::$app->user->isGuest ?
                 ['label' => Yii::t('app', 'NAV_LOGOUT'),
                     'url' => ['/user/default/logout'],
-                    'linkOptions' => ['data-method' => 'post']],
+                    'linkOptions' => ['data-method' => 'post']] :
+                false,
         ]),
     ]);
     NavBar::end();

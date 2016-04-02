@@ -44,6 +44,13 @@ class User extends ActiveRecord implements IdentityInterface
         return 'user';
     }
 
+    public function scenarios()
+    {
+        return [
+            self::SCENARIO_DEFAULT => ['username', 'email', 'status'],
+        ];
+    }
+
     public function rules()
     {
         return [
@@ -60,6 +67,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => array_keys(self::getStatusesArray())],
+
         ];
     }
 
