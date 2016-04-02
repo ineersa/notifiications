@@ -65,6 +65,9 @@ $config = [
                 ],
             ],
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\PhpManager',
+        ],
     ],
     'modules' => [
         'user' => [

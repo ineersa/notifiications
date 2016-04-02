@@ -9,6 +9,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use app\components\widgets\Alert;
+use app\modules\admin\rbac\Rbac as AdminRbac;
 
 AppAsset::register($this);
 ?>
@@ -45,7 +46,7 @@ AppAsset::register($this);
             Yii::$app->user->isGuest ?
                 ['label' => Yii::t('app', 'NAV_LOGIN'), 'url' => ['/user/default/login']] :
                 false,
-            !Yii::$app->user->isGuest ?
+            Yii::$app->user->can(AdminRbac::PERMISSION_ADMIN_PANEL) ?
                 ['label' => Yii::t('app', 'NAV_ADMIN'), 'items' => [
                     ['label' => Yii::t('app', 'NAV_ADMIN'), 'url' => ['/admin/default/index']],
                     ['label' => Yii::t('app', 'ADMIN_USERS'), 'url' => ['/admin/users/index']],
