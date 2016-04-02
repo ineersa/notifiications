@@ -73,6 +73,9 @@ $config = [
         'main' => [
             'class' => 'app\modules\main\Module',
         ],
+        'admin' => [
+            'class' => 'app\modules\admin\Module',
+        ],
     ],
     'params' => $params,
 ];
