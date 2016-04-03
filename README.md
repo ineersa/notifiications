@@ -84,7 +84,8 @@ EVENTS SYSTEM EXPLANATION
         $this->initArticleHandlers($this);//you can init only specific events or all
     }
     
-    //trigger event where you need it 
+    //trigger event where you need it
+    //you need to pass appropriate model for event
     $event = $this->getArticleEvent($this);
     $this->trigger($event::ARTICLE_CREATED,$event);
 ```
