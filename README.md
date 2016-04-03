@@ -1,31 +1,19 @@
-Yii 2 Basic Project Template
-============================
+Yii2 Notification events test 
+=============================
 
-Yii 2 Basic Project Template is a skeleton [Yii 2](http://www.yiiframework.com/) application best for
-rapidly creating small projects.
+Basic starting platform with simple user functions(auth, registration, password change etc..)
+and RBAC.
 
-The template contains the basic features including user login/logout and a contact page.
-It includes all commonly used configurations that would allow you to focus on adding new
-features to your application.
-
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/yii2-app-basic/v/stable.png)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![Total Downloads](https://poser.pugx.org/yiisoft/yii2-app-basic/downloads.png)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![Build Status](https://travis-ci.org/yiisoft/yii2-app-basic.svg?branch=master)](https://travis-ci.org/yiisoft/yii2-app-basic)
+  
 
 DIRECTORY STRUCTURE
 -------------------
 
-      assets/             contains assets definition
-      commands/           contains console commands (controllers)
-      config/             contains application configurations
-      controllers/        contains Web controller classes
-      mail/               contains view files for e-mails
-      models/             contains model classes
-      runtime/            contains files generated during runtime
-      tests/              contains various tests for the basic application
-      vendor/             contains dependent 3rd-party packages
-      views/              contains view files for the Web application
-      web/                contains the entry script and Web resources
+Contains modules:
+
+      admin/          admin module for users/articles/notifications managment
+      main/           main module for users 
+      user/           contains functionality for user
 
 
 
@@ -33,51 +21,33 @@ REQUIREMENTS
 ------------
 
 The minimum requirement by this project template that your Web server supports PHP 5.4.0.
-
+MySQL database.
 
 INSTALLATION
 ------------
 
-### Install from an Archive File
-
-Extract the archive file downloaded from [yiiframework.com](http://www.yiiframework.com/download/) to
-a directory named `basic` that is directly under the Web root.
-
-Set cookie validation key in `config/web.php` file to some random secret string:
-
+### Make migrations via
 ```php
-'request' => [
-    // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-    'cookieValidationKey' => '<secret random string goes here>',
-],
+    php yii migrate/up
 ```
 
-You can then access the application through the following URL:
+### Init RBAC
+```php
+    php yii rbac/init
+```
 
-~~~
-http://localhost/basic/web/
-~~~
+### Assign roles
+```php
+    php yii roles/assign
+```
+Also revoke available.
 
-
-### Install via Composer
-
-If you do not have [Composer](http://getcomposer.org/), you may install it by following the instructions
-at [getcomposer.org](http://getcomposer.org/doc/00-intro.md#installation-nix).
-
-You can then install this project template using the following command:
-
-~~~
-php composer.phar global require "fxp/composer-asset-plugin:~1.1.1"
-php composer.phar create-project --prefer-dist --stability=dev yiisoft/yii2-app-basic basic
-~~~
-
-Now you should be able to access the application through the following URL, assuming `basic` is the directory
-directly under the Web root.
-
-~~~
-http://localhost/basic/web/
-~~~
-
+### User management available via console:
+```php
+    php yii users/create
+    ...
+```
+See actions of `app\commands\UserController.php`
 
 CONFIGURATION
 -------------
@@ -96,7 +66,88 @@ return [
 ];
 ```
 
-**NOTES:**
-- Yii won't create the database for you, this has to be done manually before you can access it.
-- Check and edit the other files in the `config/` directory to customize your application as required.
-- Refer to the README in the `tests` directory for information specific to basic application tests.
+EVENTS SYSTEM EXPLANATION
+-------------------------
+
+### Attach event to your model:
+```php
+    //include events traits
+    
+    use EventsTrait;
+    use EventsHandlersTrait;
+    ...
+    
+    //init handlers (for example in init function), you can overwrite them if needed
+    public function init()
+    {
+        parent::init();
+        $this->initArticleHandlers($this);//you can use only specific events
+    }
+    
+    //trigger event where you need it 
+    $event = $this->getArticleEvent($this);
+    $this->trigger($event::ARTICLE_CREATED,$event);
+```
+
+### Adding new event class:
+
+    *   Create new event class which implements EventInterface
+    *   Add new event to EventsTrait
+    *   Create handler init in EventsHandlersTrait
+    *   Append events available to admin/notifications/_form dropdownList
+    
+### Adding new event to existing classes:
+    
+    ```php
+        //add constant
+        const ARTICLE_CREATED = 'articleCreated';
+        
+        //add to eevents array
+        public static function getEvents()
+        {
+            return [
+                self::ARTICLE_CREATED => self::ARTICLE_CREATED,
+                self::ARTICLE_UPDATED => self::ARTICLE_UPDATED
+            ];
+        }
+    ```
+After that you can create notification for event and attach to your models.
+
+### Adding new handling type for event:
+
+    ```php 
+        //append Notifications
+        static $_types = [
+                1 => 'email',
+                2 => 'browser'
+        ];
+        ...
+        
+    ```
+Add new type to handling function in `EventsHandlersTrait`:
+    
+    ```php
+        ...
+        switch(Notifications::$_types[$type]){
+            case 'email':
+                $notification->sendEmailNotification($event->getModel(),$event->getTokens());
+                break;
+            case 'browser':
+                $notification->addToBrowserQuery($event->getModel(),$event->getTokens());
+                break;
+            default:
+                $event->handled = true;
+                break;
+        }
+        ...
+
+    ```
+    
+### Adding tokens:
+    
+Overwrite `getTokens()` and `getTokensForView()` functions in your model.
+
+TESTING
+-------------------------
+
+    @TODO

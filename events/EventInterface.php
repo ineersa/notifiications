@@ -16,4 +16,15 @@ interface EventInterface
      * @return array
      */
     public function getTokens();
+
+    /**
+     * Return array of available events
+     * @return array
+     */
+    public static function getEvents();
+
+    /**
+     * @return array
+     */
+    public static function getTokensForView();
 }
