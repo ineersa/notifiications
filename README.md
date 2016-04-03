@@ -81,7 +81,7 @@ EVENTS SYSTEM EXPLANATION
     public function init()
     {
         parent::init();
-        $this->initArticleHandlers($this);//you can use only specific events
+        $this->initArticleHandlers($this);//you can init only specific events or all
     }
     
     //trigger event where you need it 
