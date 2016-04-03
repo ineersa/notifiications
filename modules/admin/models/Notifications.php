@@ -3,9 +3,11 @@
 namespace app\modules\admin\models;
 
 use app\events\UserEvent;
+use app\modules\main\models\BrowserQuery;
 use app\modules\user\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\helpers\Html;
 
 /**
@@ -20,12 +22,12 @@ use yii\helpers\Html;
  * @property integer $to
  * @property string $notification_title
  * @property string $text
- * @property string $type
+ * @property array $type
  *
  * @property User $fromUser
  * @property User $toUser
  */
-class Notifications extends \yii\db\ActiveRecord
+class Notifications extends ActiveRecord
 {
 
     static $_types = [
@@ -165,7 +167,7 @@ class Notifications extends \yii\db\ActiveRecord
                  * @var $to User
                  */
                 foreach ($users as $to) {
-                    $result = \Yii::$app->mailer
+                    \Yii::$app->mailer
                         ->compose(
                             ['html' => '@app/modules/admin/mails/notification'],
                             ['text' => $this->text]
@@ -195,8 +197,18 @@ class Notifications extends \yii\db\ActiveRecord
         }
     }
 
-    public function addToBrowserQuery()
+    /**
+     * @param $model
+     * @param $tokens
+     * @return bool
+     */
+    public function addToBrowserQuery($model,$tokens)
     {
-
+        $this->prepareTexts($model, $tokens);
+        $browserQuery = new BrowserQuery();
+        $browserQuery->notification_id = $this->id;
+        $browserQuery->notification_title = $this->notification_title;
+        $browserQuery->text = $this->text;
+        return $browserQuery->save();
     }
 }

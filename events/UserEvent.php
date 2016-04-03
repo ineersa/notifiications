@@ -12,7 +12,7 @@ class UserEvent extends Event implements EventInterface
     const USER_REGISTERED = 'userRegistered';
     const USER_BLOCKED = 'userBlocked';
 
-    private $_tokens = [
+    protected $_tokens = [
         '{user_id}' => 'id',
         '{username}' => 'username'
     ];

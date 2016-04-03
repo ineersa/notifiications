@@ -13,7 +13,7 @@ class ArticleEvent extends Event implements EventInterface
     const ARTICLE_CREATED = 'articleCreated';
     const ARTICLE_UPDATED = 'articleUpdated';
 
-    private $_tokens = [
+    protected $_tokens = [
         '{title}' => 'title',
         '{link}' => ''
     ];

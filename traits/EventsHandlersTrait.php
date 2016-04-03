@@ -44,7 +44,7 @@ trait EventsHandlersTrait
                     $notification->sendEmailNotification($event->getModel(),$event->getTokens());
                     break;
                 case 'browser':
-                    $notification->addToBrowserQuery();
+                    $notification->addToBrowserQuery($event->getModel(),$event->getTokens());
                     break;
                 default:
                     $event->handled = true;
