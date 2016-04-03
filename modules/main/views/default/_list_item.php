@@ -14,7 +14,7 @@ Alert::begin([
         'class' => 'alert-info',
     ],
     'closeButton' => [
-        'onclick' => 'setRead('.$model->notification->id.','.\Yii::$app->user->id.')'
+        'onclick' => 'setRead('.$model->id.','.\Yii::$app->user->id.')'
     ],
 ]);
 ?>

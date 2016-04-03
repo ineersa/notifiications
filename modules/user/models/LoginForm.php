@@ -2,10 +2,8 @@
 
 namespace app\modules\user\models;
 
-use app\traits\EventsHandlersTrait;
 use Yii;
 use yii\base\Model;
-use app\traits\EventsTrait;
 
 
 /**
@@ -13,21 +11,11 @@ use app\traits\EventsTrait;
  */
 class LoginForm extends Model
 {
-    use EventsTrait;
-    use EventsHandlersTrait;
-
     public $username;
     public $password;
     public $rememberMe = true;
 
     private $_user = false;
-
-    public function init()
-    {
-        $this->initUserHandlers($this);
-
-        parent::init();
-    }
 
     /**
      * @return array the validation rules.
@@ -67,9 +55,6 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            /*$event = $this->getUserEvent($this->getUser());
-            $this->trigger($event::USER_REGISTERED,$event);
-            return false;*/
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
         } else {
             return false;

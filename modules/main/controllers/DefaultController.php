@@ -42,13 +42,13 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $subQuery = BrowserQueryRead::find()
-            ->select('notification_id')
+            ->select('query_id')
             ->where(['user_id'=>\Yii::$app->user->id]);
 
         $query = BrowserQuery::find()
             ->joinWith(['notification'],false)
             ->where(['notifications.to'=>[0,\Yii::$app->user->id]])
-            ->andWhere(['not in','notification_id',$subQuery])
+            ->andWhere(['not in','browser_query.id',$subQuery])
             ->orderBy('id DESC');
 
         $dataProvider = new ActiveDataProvider([
@@ -64,7 +64,7 @@ class DefaultController extends Controller
     public function actionSetRead()
     {
         $read = new BrowserQueryRead();
-        $read->notification_id = \Yii::$app->request->post('notificationId',0);
+        $read->query_id = \Yii::$app->request->post('queryId',0);
         $read->user_id = \Yii::$app->request->post('userId',0);
         $read->save();
     }

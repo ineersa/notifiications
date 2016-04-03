@@ -12,7 +12,7 @@ class UserEvent extends Event implements EventInterface
     const USER_REGISTERED = 'userRegistered';
     const USER_BLOCKED = 'userBlocked';
 
-    protected $_tokens = [
+    protected static $_tokens = [
         '{user_id}' => 'id',
         '{username}' => 'username'
     ];
@@ -43,7 +43,7 @@ class UserEvent extends Event implements EventInterface
 
     public function getTokens()
     {
-        return $this->_tokens;
+        return static::$_tokens;
     }
 
     public static function getEvents()
@@ -52,5 +52,10 @@ class UserEvent extends Event implements EventInterface
             self::USER_REGISTERED => self::USER_REGISTERED,
             self::USER_BLOCKED => self::USER_BLOCKED,
         ];
+    }
+
+    public static function getTokensForView()
+    {
+        return array_keys(static::$_tokens);
     }
 }

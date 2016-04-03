@@ -2,6 +2,8 @@
 
 namespace app\modules\admin\models;
 
+use app\traits\EventsHandlersTrait;
+use app\traits\EventsTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 
@@ -17,6 +19,15 @@ use yii\behaviors\TimestampBehavior;
  */
 class Articles extends \yii\db\ActiveRecord
 {
+
+    use EventsTrait;
+    use EventsHandlersTrait;
+
+    public function init()
+    {
+        parent::init();
+        $this->initArticleHandlers($this);
+    }
 
     /**
      * @inheritdoc
@@ -58,5 +69,14 @@ class Articles extends \yii\db\ActiveRecord
             'article_name' => Yii::t('app', 'Article Name'),
             'text' => Yii::t('app', 'Text'),
         ];
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $event = $this->getArticleEvent($this);
+        if ($insert){
+            $this->trigger($event::ARTICLE_CREATED,$event);
+        } else $this->trigger($event::ARTICLE_UPDATED,$event);
     }
 }

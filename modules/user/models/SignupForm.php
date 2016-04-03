@@ -1,6 +1,8 @@
 <?php
 namespace app\modules\user\models;
 
+use app\traits\EventsHandlersTrait;
+use app\traits\EventsTrait;
 use yii\base\Model;
 use Yii;
 
@@ -9,10 +11,19 @@ use Yii;
  */
 class SignupForm extends Model
 {
+    use EventsTrait;
+    use EventsHandlersTrait;
+
     public $username;
     public $email;
     public $password;
     public $verifyCode;
+
+    public function init()
+    {
+        parent::init();
+        $this->initUserHandlers($this);
+    }
 
     public function rules()
     {
@@ -57,6 +68,9 @@ class SignupForm extends Model
                     ->setTo($this->email)
                     ->setSubject('Email confirmation for ' . Yii::$app->name)
                     ->send();
+
+                $event = $this->getUserEvent($user);
+                $this->trigger($event::USER_REGISTERED,$event);
             }
 
             return $user;

@@ -33,9 +33,9 @@ echo ListView::widget([
 ]);
 ?>
 <script>
-    function setRead(notificationId,userId)
+    function setRead(queryId,userId)
     {
-        $.post('<?=Url::to('/main/default/set-read');?>',{notificationId:notificationId,userId:userId},function(data){
+        $.post('<?=Url::to('/main/default/set-read');?>',{queryId:queryId,userId:userId},function(){
             window.location.reload();
         });
     }

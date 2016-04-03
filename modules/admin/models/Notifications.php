@@ -2,9 +2,9 @@
 
 namespace app\modules\admin\models;
 
+use app\events\ArticleEvent;
 use app\events\UserEvent;
 use app\modules\main\models\BrowserQuery;
-use app\modules\user\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -139,7 +139,16 @@ class Notifications extends ActiveRecord
         $events = UserEvent::getEvents();
         return self::find()
             ->where(['event'=>array_keys($events)])
-            ->with(['fromUser'])
+            //->with(['fromUser'])
+            ->all();
+    }
+
+    public static function getArticleEventsNotifications()
+    {
+        $events = ArticleEvent::getEvents();
+        return self::find()
+            ->where(['event'=>array_keys($events)])
+            //->with(['fromUser'])
             ->all();
     }
 
@@ -156,31 +165,31 @@ class Notifications extends ActiveRecord
                 ->where(['id'=>$userIds])
                 ->andWhere(['status'=>User::STATUS_ACTIVE])
                 ->all();
+
         } else {
             $users = User::find()
                 ->where(['id'=>$this->to])
                 ->all();
         }
-        try {
-            if (!empty($users)) {
-                /**
-                 * @var $to User
-                 */
-                foreach ($users as $to) {
-                    \Yii::$app->mailer
-                        ->compose(
-                            ['html' => '@app/modules/admin/mails/notification'],
-                            ['text' => $this->text]
-                        )
-                        ->setFrom($this->fromUser->email)
-                        ->setTo($to->email)
-                        ->setSubject($this->notification_title)
-                        ->send();
-                }
+
+        if (!empty($users)) {
+            /**
+             * @var $to User
+             */
+            foreach ($users as $to) {
+                \Yii::$app->mailer
+                    ->compose(
+                        ['html' => '@app/modules/admin/mails/notification'],
+                        ['text' => $this->text]
+                    )
+                    ->setFrom($this->fromUser->email)
+                    ->setTo($to->email)
+                    ->setSubject($this->notification_title)
+                    ->send();
             }
-        } catch (\Exception $e){
-            die($e->getMessage());
+
         }
+
     }
 
     /**
@@ -193,6 +202,9 @@ class Notifications extends ActiveRecord
             if ($model->hasAttribute($value)){
                 $this->notification_title = str_ireplace($token,$model->getAttribute($value),$this->notification_title);
                 $this->text = str_ireplace($token,$model->getAttribute($value),$this->text);
+            } else {
+                $this->notification_title = str_ireplace($token,$value,$this->notification_title);
+                $this->text = str_ireplace($token,$value,$this->text);
             }
         }
     }
@@ -209,6 +221,7 @@ class Notifications extends ActiveRecord
         $browserQuery->notification_id = $this->id;
         $browserQuery->notification_title = $this->notification_title;
         $browserQuery->text = $this->text;
+
         return $browserQuery->save();
     }
 }

@@ -204,6 +204,7 @@ class User extends ActiveRecord implements IdentityInterface
             }
             return true;
         }
+
         return false;
     }
 

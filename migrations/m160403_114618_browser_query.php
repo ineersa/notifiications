@@ -20,12 +20,12 @@ class m160403_114618_browser_query extends Migration
 
         $this->createTable('{{%browser_query_read}}', [
             'id' => $this->primaryKey(),
-            'notification_id' => $this->integer()->notNull(),
+            'query_id' => $this->integer()->notNull(),
             'user_id' => $this->integer()->notNull()
         ], $tableOptions);
 
         $this->addForeignKey('idx-browser_query-notification_id','{{%browser_query}}','notification_id','{{%notifications}}','id','CASCADE');
-        $this->addForeignKey('idx-browser_query_read-notification_id','{{%browser_query_read}}','notification_id','{{%notifications}}','id','CASCADE');
+        $this->addForeignKey('idx-browser_query_read-query_id','{{%browser_query_read}}','query_id','{{%browser_query}}','id','CASCADE');
         $this->addForeignKey('idx-browser_query_read-user_id','{{%browser_query_read}}','user_id','{{%user}}','id','CASCADE');
     }
 

@@ -2,7 +2,6 @@
 
 namespace app\modules\main\models;
 
-use app\modules\admin\models\Notifications;
 use app\modules\admin\models\User;
 use Yii;
 
@@ -10,10 +9,10 @@ use Yii;
  * This is the model class for table "browser_query_read".
  *
  * @property integer $id
- * @property integer $notification_id
+ * @property integer $query_id
  * @property integer $user_id
  *
- * @property Notifications $notification
+ * @property BrowserQuery $query
  * @property User $user
  */
 class BrowserQueryRead extends \yii\db\ActiveRecord
@@ -32,9 +31,9 @@ class BrowserQueryRead extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['notification_id', 'user_id'], 'required'],
-            [['notification_id', 'user_id'], 'integer'],
-            [['notification_id'], 'exist', 'skipOnError' => true, 'targetClass' => Notifications::className(), 'targetAttribute' => ['notification_id' => 'id']],
+            [['query_id', 'user_id'], 'required'],
+            [['query_id', 'user_id'], 'integer'],
+            [['query_id'], 'exist', 'skipOnError' => true, 'targetClass' => BrowserQuery::className(), 'targetAttribute' => ['query_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -45,18 +44,18 @@ class BrowserQueryRead extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'notification_id' => Yii::t('app', 'Notification ID'),
-            'user_id' => Yii::t('app', 'User ID'),
+            'id' => 'ID',
+            'query_id' => 'Query ID',
+            'user_id' => 'User ID',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getNotification()
+    public function getQuery()
     {
-        return $this->hasOne(Notifications::className(), ['id' => 'notification_id']);
+        return $this->hasOne(BrowserQuery::className(), ['id' => 'query_id']);
     }
 
     /**

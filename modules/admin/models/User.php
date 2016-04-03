@@ -1,16 +1,28 @@
 <?php
 namespace app\modules\admin\models;
 
+use app\traits\EventsHandlersTrait;
+use app\traits\EventsTrait;
 use yii\helpers\ArrayHelper;
 use Yii;
 
 class User extends \app\modules\user\models\User
 {
+    use EventsTrait;
+    use EventsHandlersTrait;
+
     const SCENARIO_ADMIN_CREATE = 'adminCreate';
     const SCENARIO_ADMIN_UPDATE = 'adminUpdate';
 
     public $newPassword;
     public $newPasswordRepeat;
+
+    public function init()
+    {
+        parent::init();
+        $this->initUserHandlers($this);
+    }
+
 
     public function rules()
     {
@@ -46,6 +58,15 @@ class User extends \app\modules\user\models\User
             return true;
         }
         return false;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if (array_key_exists('status',$changedAttributes) && $this->status == self::STATUS_BLOCKED){
+            $event = $this->getUserEvent($this);
+            $this->trigger($event::USER_BLOCKED,$event);
+        }
     }
 
     public static function getUsers()

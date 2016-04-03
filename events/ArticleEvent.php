@@ -13,8 +13,8 @@ class ArticleEvent extends Event implements EventInterface
     const ARTICLE_CREATED = 'articleCreated';
     const ARTICLE_UPDATED = 'articleUpdated';
 
-    protected $_tokens = [
-        '{title}' => 'title',
+    protected static $_tokens = [
+        '{title}' => 'article_name',
         '{link}' => ''
     ];
 
@@ -44,9 +44,10 @@ class ArticleEvent extends Event implements EventInterface
 
     public function getTokens()
     {
+        $tokens = static::$_tokens;
         $url = Url::to(['/admin/articles/view','id'=>$this->getArticle()->id],true);
-        $this->_tokens['{link}'] = $url;
-        return $this->_tokens;
+        $tokens['{link}'] = $url;
+        return $tokens;
     }
 
     public static function getEvents()
@@ -55,5 +56,10 @@ class ArticleEvent extends Event implements EventInterface
             self::ARTICLE_CREATED => self::ARTICLE_CREATED,
             self::ARTICLE_UPDATED => self::ARTICLE_UPDATED
         ];
+    }
+
+    public static function getTokensForView()
+    {
+        return array_keys(static::$_tokens);
     }
 }

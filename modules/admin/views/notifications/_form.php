@@ -12,6 +12,8 @@ $events = [
     Yii::t('app','USER_EVENTS') => \app\events\UserEvent::getEvents(),
     Yii::t('app','ARTICLE_EVENTS') => \app\events\ArticleEvent::getEvents()
 ];
+use \app\events\UserEvent;
+use \app\events\ArticleEvent;
 ?>
 
 <div class="notifications-form">
@@ -25,6 +27,21 @@ $events = [
     <?= $form->field($model, 'from')->dropDownList($users) ?>
 
     <?= $form->field($model, 'to')->dropDownList([0=>Yii::t('app','ALL_USERS')] + $users) ?>
+
+    <div class="tokens">
+        <p>
+            <?=\Yii::t('app','USER_TOKENS_AVAILABLE');?>
+        <?php foreach(UserEvent::getTokensForView() as $token)
+            echo $token . ' ';
+        ?>
+        </p>
+        <p>
+            <?=\Yii::t('app','ARTICLE_TOKENS_AVAILABLE');?>
+            <?php foreach(ArticleEvent::getTokensForView() as $token)
+                echo $token . ' ';
+            ?>
+        </p>
+    </div>
 
     <?= $form->field($model, 'notification_title')->textInput(['maxlength' => true]) ?>
 

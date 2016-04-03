@@ -3,11 +3,10 @@
 namespace app\traits;
 
 use app\events\ArticleEvent;
-use app\events\EventInterface;
 use app\events\UserEvent;
 use app\modules\admin\models\Notifications;
 use yii\base\Component;
-use yii\base\Event;
+
 
 trait EventsHandlersTrait
 {
@@ -18,6 +17,24 @@ trait EventsHandlersTrait
     protected function initUserHandlers($object)
     {
         $userNotifications = Notifications::getUserEventsNotifications();
+        foreach($userNotifications as $userNotification){
+            $object->on($userNotification->event, function ($e) use ($userNotification){
+                /**
+                 * @var $e UserEvent
+                 */
+                foreach($userNotification->type as $type){
+                    $this->handle($e,$userNotification,$type);
+                }
+            });
+        }
+    }
+
+    /**
+     * @param $object Component
+     */
+    protected function initArticleHandlers($object)
+    {
+        $userNotifications = Notifications::getArticleEventsNotifications();
         foreach($userNotifications as $userNotification){
             $object->on($userNotification->event, function ($e) use ($userNotification){
                 /**
@@ -53,5 +70,7 @@ trait EventsHandlersTrait
         } else {
             return $event->handled = true;
         }
+
+        return true;
     }
 }
