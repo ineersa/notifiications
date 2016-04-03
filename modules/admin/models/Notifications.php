@@ -2,6 +2,8 @@
 
 namespace app\modules\admin\models;
 
+use app\events\UserEvent;
+use app\modules\user\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\Html;
@@ -20,8 +22,8 @@ use yii\helpers\Html;
  * @property string $text
  * @property string $type
  *
- * @property User $from0
- * @property User $to0
+ * @property User $fromUser
+ * @property User $toUser
  */
 class Notifications extends \yii\db\ActiveRecord
 {
@@ -118,7 +120,8 @@ class Notifications extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'to']);
     }
 
-    public function getTypes(){
+    public function getTypes()
+    {
         $value = $this->type;
         $html = '';
         if (!empty($value))
@@ -127,5 +130,73 @@ class Notifications extends \yii\db\ActiveRecord
             }
 
         return $html;
+    }
+
+    public static function getUserEventsNotifications()
+    {
+        $events = UserEvent::getEvents();
+        return self::find()
+            ->where(['event'=>array_keys($events)])
+            ->with(['fromUser'])
+            ->all();
+    }
+
+    /**
+     * @param $model User|Articles
+     * @param $tokens
+     */
+    public function sendEmailNotification($model, $tokens)
+    {
+        $this->prepareTexts($model, $tokens);
+        if ($this->to == 0){
+            $userIds = Yii::$app->authManager->getUserIdsByRole('user');
+            $users = User::find()
+                ->where(['id'=>$userIds])
+                ->andWhere(['status'=>User::STATUS_ACTIVE])
+                ->all();
+        } else {
+            $users = User::find()
+                ->where(['id'=>$this->to])
+                ->all();
+        }
+        try {
+            if (!empty($users)) {
+                /**
+                 * @var $to User
+                 */
+                foreach ($users as $to) {
+                    $result = \Yii::$app->mailer
+                        ->compose(
+                            ['html' => '@app/modules/admin/mails/notification'],
+                            ['text' => $this->text]
+                        )
+                        ->setFrom($this->fromUser->email)
+                        ->setTo($to->email)
+                        ->setSubject($this->notification_title)
+                        ->send();
+                }
+            }
+        } catch (\Exception $e){
+            die($e->getMessage());
+        }
+    }
+
+    /**
+     * @param $model User|Articles
+     * @param $tokens
+     */
+    public function prepareTexts($model,$tokens)
+    {
+        foreach($tokens as $token=>$value){
+            if ($model->hasAttribute($value)){
+                $this->notification_title = str_ireplace($token,$model->getAttribute($value),$this->notification_title);
+                $this->text = str_ireplace($token,$model->getAttribute($value),$this->text);
+            }
+        }
+    }
+
+    public function addToBrowserQuery()
+    {
+
     }
 }

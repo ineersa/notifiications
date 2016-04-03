@@ -67,9 +67,9 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            /*$event = $this->getUserEvent($this->getUser());
-            $this->trigger($event::USER_BLOCKED,$event);
-            return false;*/
+            $event = $this->getUserEvent($this->getUser());
+            $this->trigger($event::USER_REGISTERED,$event);
+            return false;
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
         } else {
             return false;

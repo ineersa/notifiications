@@ -7,10 +7,15 @@ use yii\base\Event;
 /**
  * @property User $model
  */
-class UserEvent extends Event
+class UserEvent extends Event implements EventInterface
 {
     const USER_REGISTERED = 'userRegistered';
     const USER_BLOCKED = 'userBlocked';
+
+    private $_tokens = [
+        '{user_id}' => 'id',
+        '{username}' => 'username'
+    ];
 
     /**
      * @var User
@@ -29,6 +34,16 @@ class UserEvent extends Event
     public function setUser(User $form)
     {
         $this->_user = $form;
+    }
+
+    public function getModel()
+    {
+        return $this->getUser();
+    }
+
+    public function getTokens()
+    {
+        return $this->_tokens;
     }
 
     public static function getEvents()
